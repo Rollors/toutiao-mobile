@@ -1,3 +1,14 @@
+# 这个值会被@babel/preset-env和Autoprefixer用来确定需要转译的Javascript特性和需要添加的CSS浏览器前缀
+# browserlist配置参考：https://github.com/browserslist/browserslist
+
+# 要兼容到超过百分之一的用户使用的浏览器
 > 1%
+
+# 兼容到最后的两个版本
 last 2 versions
+
 not dead
+
+# 上面可以注释
+Android>=4.0
+ios>=8
