@@ -70,7 +70,7 @@ export default {
         // 3情求调用登录
         const res = await login(this.user)
         // 4处理响应结果
-        console.log(res)
+        // console.log(res)
         Toast.success('登录成功')
 
         // 将后端返回的用户登录状态(token等数据)放入到vuex
@@ -78,7 +78,7 @@ export default {
         // 登录成功跳转回原来页面
         this.$router.back() // 先用这种方式，但是它不好
       } catch (err) {
-        console.log(err)
+        // console.log(err)
         Toast.fail('登录失败，手机号或验证码错误')
       }
     },
