@@ -7,7 +7,8 @@
         finished-text="没有更多了"
         @load="onLoad"
       >
-        <van-cell v-for="(item, index) in articles" :key="index" :title="item.title" />
+        <article-item v-for="(item, index) in articles" :key="index" :article="item" />
+        <!--        <van-cell v-for="(item, index) in articles" :key="index" :title="item.title" />-->
       </van-list>
     </van-pull-refresh>
   </div>
@@ -15,10 +16,13 @@
 
 <script>
 import { getArticles } from '@/api/article'
+import ArticleItem from '@/components/article-item'
 
 export default {
   name: 'ArticleList',
-  components: {},
+  components: {
+    ArticleItem
+  },
   props: {
     channel: {
       type: Object,
@@ -85,5 +89,12 @@ export default {
   bottom: 50px;
   top: 90px;
   overflow: auto;
+  .van-pull-refresh{
+    .van-list{
+      .article-item{
+        height: 100%;
+      }
+    }
+  }
 }
 </style>
