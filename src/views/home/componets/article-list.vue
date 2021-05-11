@@ -52,7 +52,7 @@ export default {
       // timestamp 是 时间戳整数 单位毫秒 时间戳，请求新的推荐数据传当前的时间戳，请求历史推荐传指定的时间戳,就是获取页面，请求最新页面用当前最新时间戳，下一页数据使用上一次返回数据中的时间戳
       // with_top 是 0或1 是否包含置顶，进入页面第一次请求时要包含置顶文章，1-包含置顶，0-不包
       const { data } = await getArticles({ channel_id: this.channel.id, timestamp: this.timestamp || Date.now(), with_top: 1 })
-      console.log(data)
+      // console.log(data)
       // 2把数据放到list数组中
       const { results } = data.data
       this.articles.push(...results)

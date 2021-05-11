@@ -15,6 +15,8 @@ import 'amfe-flexible'
 // 加载全局样式，最好放到样式加载的最后，方便覆盖第三方样式
 import './styles/index.less'
 
+import './utils/day'
+
 // 全局注册Vant中的组件
 Vue.use(Vant)
 Vue.config.productionTip = false
