@@ -2,7 +2,7 @@
   <div class="home-container">
     <!--    $router.back()从哪来回哪去-->
     <van-nav-bar class="app-nav-bar">
-      <van-button class="search-btn" slot="title" icon="search" type="info" round>搜索</van-button>
+      <van-button class="search-btn" slot="title" icon="search" type="info" round to="/search">搜索</van-button>
     </van-nav-bar>
 
     <!--    文章频道列表-->

@@ -33,6 +33,11 @@ const routes = [
         path: '/my', // 默认子路由
         name: 'my',
         component: () => import('@/views/my/')
+      },
+      {
+        path: '/search',
+        name: 'search',
+        component: () => import('@/views/search/')
       }
     ]
   }

@@ -1,6 +1,10 @@
 <template>
   <div class="article-list">
-    <van-pull-refresh v-model="isPullDownLoading" @refresh="onRefresh" :success-text="refreshText" :success-duration="1000">
+    <van-pull-refresh
+      v-model="isPullDownLoading"
+      @refresh="onRefresh"
+      :success-text="refreshText"
+      :success-duration="1000">
       <van-list
         v-model="loading"
         :finished="finished"
