@@ -34,17 +34,24 @@
         class="content markdown-body"
         v-html="article.content" ref="article-content">
       </div>
+      <!--    文章评论-->
+      <comment-list
+        :source="articleId"
+        :list="commentList"
+        @update-total-count="totalComment = $event"
+        @reply-click="onReplyClick"/>
     </div>
+
     <!--    底部区域-->
     <div class="article-bottom">
       <van-button
         class="comment-btn"
         type="default"
         round
-        size="small">写评论</van-button>
+        size="small" @click="isPostShow=true">写评论</van-button>
       <van-icon
         name="comment-o"
-        info="123"
+        :badge="totalComment"
         color="#777" />
       <van-icon
         :color="article.is_collected ? 'orange':'#777'"
@@ -58,6 +65,26 @@
         name="share"
         color="#777" />
     </div>
+    <!--    发布评论-->
+    <van-popup
+      v-model="isPostShow"
+      position="bottom"
+       >
+      <post-comment
+        :target="articleId" @post-success="onPostSuccess"/>
+    </van-popup>
+    <!--    评论回复-->
+    <van-popup
+      v-model="isReplyShow"
+      position="bottom"
+    >
+    <!--      v-if目的是让组件随着弹出层的显示进行渲染和销毁，防止加载过的组件不重新渲染导致数据不重新加载的问题-->
+      <comment-reply
+        v-if="isReplyShow"
+        :comment="replyComment"
+        @close="isReplyShow=false"
+        :article-id="articleId"/>
+    </van-popup>
   </div>
 </template>
 
@@ -69,10 +96,17 @@ import './github-markdown.css'
 import { getArticleById, addCollect, deleteCollect, addLike, deleteLike } from '@/api/article'
 import { ImagePreview } from 'vant'
 import { addFollow, deleteFollow } from '@/api/user'
-
+import CommentList from './components/comment-list'
+import PostComment from './components/post-comment'
+import CommentReply from './components/comment-reply'
 // ImagePreview(['https://img.yzcdn.cn/vant/apple-1.jpg', 'https://img.yzcdn.cn/vant/apple-2.jpg'])
 export default {
   name: 'ArticleContainer',
+  components: {
+    CommentList,
+    PostComment,
+    CommentReply
+  },
   props: {
     articleId: {
       type: [String, Object, Number],
@@ -83,7 +117,12 @@ export default {
     return {
       article: [],
       isFollowLoading: false,
-      isCollectLoading: false
+      isCollectLoading: false,
+      isPostShow: false, // 控制发布评论状态
+      commentList: [],
+      totalComment: 0,
+      isReplyShow: false,
+      replyComment: {}
     }
   },
   created () {
@@ -120,7 +159,6 @@ export default {
       const imgPaths = []
       imgs.forEach((img, index) => {
         imgPaths.push(img.src)
-        console.log(imgPaths)
         img.onclick = function () {
           ImagePreview({
             images: imgPaths, // 预览图片路径列表
@@ -176,6 +214,15 @@ export default {
       }
       // 更新视图
       this.$toast.success(`${this.article.attitude === 1 ? '' : '取消'}点赞成功`)
+    },
+    onPostSuccess (comment) {
+      this.commentList.unshift(comment)
+      this.totalComment++
+      this.isPostShow = false
+    },
+    onReplyClick (comment) {
+      this.replyComment = comment
+      this.isReplyShow = true
     }
   }
 }
