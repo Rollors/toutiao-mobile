@@ -82,6 +82,8 @@
     </van-popup>
 
     <van-popup
+      class="update-photo-popup"
+      v-if="isEditPhotoShow"
       v-model="isEditPhotoShow"
       position="bottom"
       :style="{ height: '100%' }">
@@ -138,5 +140,8 @@ export default {
 <style scoped lang="less">
 .van-popup{
   background-color: #f5f7f9;
+}
+.update-photo-popup{
+  background-color: #000;
 }
 </style>
