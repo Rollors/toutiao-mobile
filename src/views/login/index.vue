@@ -78,7 +78,8 @@ export default {
         // 清除layout缓存，让它重新渲染
         this.$store.commit('removeCache', 'LayoutIndex')
         // 登录成功跳转回原来页面
-        this.$router.back() // 先用这种方式，但是它不好
+        this.$router.push(this.$route.query.redirect || '/')
+        // this.$router.back() // 先用这种方式，但是它不好
       } catch (err) {
         // console.log(err)
         Toast.fail('登录失败，手机号或验证码错误')

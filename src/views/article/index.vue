@@ -5,7 +5,7 @@
       class="app-nav-bar"
       title="文章详情"
       left-arrow
-      @click-left="$router.back()"/>
+      @click-left="$router.push('/')"/>
     <div class="article-wrap">
       <!--    文章标题-->
       <h1 class="title">{{ article.title }}</h1>
@@ -99,6 +99,7 @@ import { addFollow, deleteFollow } from '@/api/user'
 import CommentList from './components/comment-list'
 import PostComment from './components/post-comment'
 import CommentReply from './components/comment-reply'
+import { mapState } from 'vuex'
 // ImagePreview(['https://img.yzcdn.cn/vant/apple-1.jpg', 'https://img.yzcdn.cn/vant/apple-2.jpg'])
 export default {
   name: 'ArticleContainer',
@@ -112,6 +113,9 @@ export default {
       type: [String, Object, Number],
       required: true
     }
+  },
+  computed: {
+    ...mapState(['user'])
   },
   data () {
     return {
@@ -168,52 +172,79 @@ export default {
       })
     },
     async onFollow () {
-      this.isFollowLoading = true
-      if (this.article.is_followed) {
-        // 已关注,取消关注
-        await deleteFollow(this.article.aut_id)
+      if (this.loginCheck()) {
+        this.isFollowLoading = true
+        if (this.article.is_followed) {
+          // 已关注,取消关注
+          await deleteFollow(this.article.aut_id)
+        } else {
+          // 未关注，添加关注
+          await addFollow(this.article.aut_id)
+        }
+        // 更新视图
+        this.article.is_followed = !this.article.is_followed
+        this.isFollowLoading = false
       } else {
-        // 未关注，添加关注
-        await addFollow(this.article.aut_id)
+        this.$router.replace({
+          name: 'login',
+          query: {
+            redirect: this.$router.currentRoute.fullPath
+          }
+        })
       }
-      // 更新视图
-      this.article.is_followed = !this.article.is_followed
-      this.isFollowLoading = false
     },
     async onCollect () {
-      this.$toast.loading({
-        message: '操作中',
-        forbidClick: true
-      })
-      this.isCollectLoading = true
-      if (this.article.is_collected) {
-        // 已收藏,取消收藏
-        await deleteCollect(this.articleId)
+      if (this.loginCheck()) {
+        this.$toast.loading({
+          message: '操作中',
+          forbidClick: true
+        })
+        this.isCollectLoading = true
+        if (this.article.is_collected) {
+          // 已收藏,取消收藏
+          await deleteCollect(this.articleId)
+        } else {
+          // 未收藏，添加收藏
+          await addCollect(this.articleId)
+        }
+        // 更新视图
+        this.article.is_collected = !this.article.is_collected
+        this.isCollectLoading = false
+        this.$toast.success(`${this.article.is_collected ? '' : '取消'}收藏成功`)
       } else {
-        // 未收藏，添加收藏
-        await addCollect(this.articleId)
+        this.$router.replace({
+          name: 'login',
+          query: {
+            redirect: this.$router.currentRoute.fullPath
+          }
+        })
       }
-      // 更新视图
-      this.article.is_collected = !this.article.is_collected
-      this.isCollectLoading = false
-      this.$toast.success(`${this.article.is_collected ? '' : '取消'}收藏成功`)
     },
     async onLike () {
-      this.$toast.loading({
-        message: '操作中',
-        forbidClick: true
-      })
-      if (this.article.attitude === 1) {
-        // 已点赞,取消已点赞
-        await deleteLike(this.articleId)
-        this.article.attitude = -1
+      if (this.loginCheck()) {
+        this.$toast.loading({
+          message: '操作中',
+          forbidClick: true
+        })
+        if (this.article.attitude === 1) {
+          // 已点赞,取消已点赞
+          await deleteLike(this.articleId)
+          this.article.attitude = -1
+        } else {
+          // 未已点赞，添加已点赞
+          await addLike(this.articleId)
+          this.article.attitude = 1
+        }
+        // 更新视图
+        this.$toast.success(`${this.article.attitude === 1 ? '' : '取消'}点赞成功`)
       } else {
-        // 未已点赞，添加已点赞
-        await addLike(this.articleId)
-        this.article.attitude = 1
+        this.$router.replace({
+          name: 'login',
+          query: {
+            redirect: this.$router.currentRoute.fullPath
+          }
+        })
       }
-      // 更新视图
-      this.$toast.success(`${this.article.attitude === 1 ? '' : '取消'}点赞成功`)
     },
     onPostSuccess (comment) {
       this.commentList.unshift(comment)
@@ -223,6 +254,13 @@ export default {
     onReplyClick (comment) {
       this.replyComment = comment
       this.isReplyShow = true
+    },
+    loginCheck () {
+      if (this.$store.state.user) {
+        return true
+      } else {
+        return false
+      }
     }
   }
 }
