@@ -75,6 +75,8 @@ export default {
 
         // 将后端返回的用户登录状态(token等数据)放入到vuex
         this.$store.commit('setUser', res.data.data)
+        // 清除layout缓存，让它重新渲染
+        this.$store.commit('removeCache', 'LayoutIndex')
         // 登录成功跳转回原来页面
         this.$router.back() // 先用这种方式，但是它不好
       } catch (err) {

@@ -1,5 +1,5 @@
 <template>
-  <div class="article-list">
+  <div class="article-list" ref="article-list">
     <van-pull-refresh
       v-model="isPullDownLoading"
       @refresh="onRefresh"
@@ -21,7 +21,7 @@
 <script>
 import { getArticles } from '@/api/article'
 import ArticleItem from '@/components/article-item'
-
+import { debounce } from 'loadsh'
 export default {
   name: 'ArticleList',
   components: {
@@ -40,7 +40,8 @@ export default {
       finished: false,
       timestamp: null,
       isPullDownLoading: false,
-      refreshText: ''
+      refreshText: '',
+      scrollTop: 0 // 列表距离顶部的距离
     }
   },
   computed: {},
@@ -48,7 +49,19 @@ export default {
   created () {
   },
   mounted () {
+    const articleList = this.$refs['article-list']
+    articleList.onscroll = debounce(() => {
+      this.scrollTop = articleList.scrollTop
+      console.log(this.scrollTop)
+    }, 50)
   },
+  activated () {
+    // console.log('从缓存中被激活')
+    this.$refs['article-list'].scrollTop = this.scrollTop
+  },
+  // deactivated () {
+  //   console.log('组件失去活动了')
+  // },
   methods: {
     async onLoad () {
       // 异步更新数据

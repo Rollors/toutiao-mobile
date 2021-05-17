@@ -1,7 +1,9 @@
 <template>
   <div class="layout-container">
     <!--    子路由出口-->
-    <router-view />
+    <keep-alive>
+      <router-view />
+    </keep-alive>
     <!--    底部导航栏-->
     <!--    固定定为在底部-->
     <!--    路由机制 父标签route子标签加to-->
@@ -27,7 +29,9 @@ export default {
   computed: {},
   watch: {},
   created () {},
-  mounted () {},
+  mounted () {
+    this.$store.commit('addCachePage', 'LayoutIndex')
+  },
   methods: {}
 }
 </script>
